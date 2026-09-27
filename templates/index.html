@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComicCraft - AI Comic Story Creator</title>
+  <meta name="description" content="Generate personalized AI comic stories and illustrations with Google Gemini models and Stable Diffusion.">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* Embedded styles matching project specifications */
+    body {
+      background-image: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('/static/images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .form-container {
+      max-width: 540px;
+      margin: 4.5rem auto 3rem auto;
+      padding: 0 1.25rem;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border-radius: 12px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .card-heading {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .form-item {
+      margin-bottom: 1.15rem;
+    }
+    .form-item label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.35rem;
+    }
+    .form-item input, .form-item textarea, .form-item select {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      font-size: 0.9rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: inherit;
+      color: #1e293b;
+      background: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-item input:focus, .form-item textarea:focus, .form-item select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem;
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    }
+    .btn-submit:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-scenic"></div>
+
+  <nav class="navbar">
+    <a href="/" class="brand">⚡ ComicCraft</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/docs" target="_blank">API Docs</a>
+      <a href="/test-image" target="_blank">Test Image</a>
+    </div>
+  </nav>
+
+  <div class="form-container">
+    <div class="card">
+      <h1 class="card-heading">
+        <span>🖌️</span> Create Your Comic
+      </h1>
+
+      <form id="comicForm" action="/generate" method="POST" onsubmit="showLoading()">
+        <div class="form-item">
+          <label for="prompt">Story Prompt:</label>
+          <textarea id="prompt" name="prompt" rows="3" required placeholder="A brave fox exploring an enchanted forest."></textarea>
+        </div>
+
+        <div class="form-item">
+          <label for="character_name">Main Character Name:</label>
+          <input type="text" id="character_name" name="character_name" required value="Free" placeholder="e.g. Free, Finn, Luna">
+        </div>
+
+        <div class="form-item">
+          <label for="setting">Setting:</label>
+          <select id="setting" name="setting" required>
+            <option value="Forest" selected>Forest</option>
+            <option value="School">School</option>
+            <option value="Space">Space</option>
+            <option value="City">City</option>
+            <option value="Ancient Castle">Ancient Castle</option>
+            <option value="Cyberpunk Metropolis">Cyberpunk Metropolis</option>
+          </select>
+        </div>
+
+        <div class="form-item">
+          <label for="tone">Story Tone:</label>
+          <select id="tone" name="tone" required>
+            <option value="Dramatic" selected>Dramatic</option>
+            <option value="Light-hearted">Light-hearted</option>
+            <option value="Funny">Funny</option>
+            <option value="Poetic">Poetic</option>
+            <option value="Adventurous">Adventurous</option>
+            <option value="Dark & Mysterious">Dark & Mysterious</option>
+          </select>
+        </div>
+
+        <div class="form-item">
+          <label for="style">Art Style:</label>
+          <select id="style" name="style" required>
+            <option value="Realistic" selected>Realistic</option>
+            <option value="Comic Book">Comic Book</option>
+            <option value="Anime">Anime</option>
+            <option value="Pixel Art">Pixel Art</option>
+            <option value="Vintage Graphic Novel">Vintage Graphic Novel</option>
+          </select>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">
+          Generate Comic
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Animation Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingStage">Generating your comic story...</div>
+    <div class="loading-subtext" id="loadingDetail">Gemini 1.5 Flash is planning the 5-panel layout</div>
+  </div>
+
+  <script>
+    function showLoading() {
+      const overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      
+      const stages = [
+        { text: "Outlining 5-Panel Story with Gemini Flash...", sub: "Structuring scenes, characters, and dialogue cues" },
+        { text: "Writing Narrative with Gemini 1.5 Pro...", sub: "Crafting atmospheric captions and vivid dialogues" },
+        { text: "Illustrating Comic Panels...", sub: "Rendering comic-style illustrations for each scene" },
+        { text: "Compiling into PDF with FPDF...", sub: "Formatting pages, typography, and image layouts" },
+        { text: "Almost ready...", sub: "Preparing your high-resolution preview" }
+      ];
+      
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        if (step < stages.length) {
+          document.getElementById("loadingStage").innerText = stages[step].text;
+          document.getElementById("loadingDetail").innerText = stages[step].sub;
+        } else {
+          clearInterval(interval);
+        }
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Records & Comic History - ComicCraft</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      font-family: 'Outfit', sans-serif;
+      margin: 0;
+    }
+    .users-container {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .table-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    th, td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="brand">⚡ ComicCraft</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/docs" target="_blank">API Docs</a>
+    </div>
+  </nav>
+
+  <div class="users-container">
+    <div class="table-card">
+      <h2>Generated Comic Records</h2>
+      <p style="color: #64748b;">Overview of recent comic creations and generated PDFs.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Story Prompt</th>
+            <th>Character</th>
+            <th>Setting</th>
+            <th>Tone / Style</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#CC-001</td>
+            <td>A brave fox exploring an enchanted forest.</td>
+            <td>Free / Finn</td>
+            <td>Forest</td>
+            <td>Dramatic / Realistic</td>
+            <td><span style="color:#16a34a; font-weight:600;">Exported (PDF)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

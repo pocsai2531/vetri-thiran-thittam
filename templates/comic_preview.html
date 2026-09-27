@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Comic Preview - ComicCraft</title>
+  <meta name="description" content="Preview of your AI-generated 5-panel comic story and illustrations.">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* Embedded styles adhering to project specification */
+    body {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      margin: 0;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .preview-container {
+      max-width: 820px;
+      margin: 2rem auto 4rem auto;
+      padding: 0 1rem;
+    }
+    .top-action-bar {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .top-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-download-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 0.75rem 1.4rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 3px 8px rgba(2, 132, 199, 0.35);
+      border: none;
+      cursor: pointer;
+    }
+    .btn-download-pdf:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+    .comic-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .panel-top {
+      padding: 1rem 1.25rem;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .panel-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
+    .panel-img-container {
+      width: 100%;
+      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .panel-img-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 480px;
+      object-fit: cover;
+    }
+    .panel-content {
+      padding: 1.25rem 1.5rem;
+    }
+    .scene-description-text {
+      font-style: italic;
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    .story-body {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #334155;
+      white-space: pre-line;
+    }
+    .prompt-box {
+      margin-top: 1rem;
+      padding: 0.6rem 0.85rem;
+      background: #f8fafc;
+      border-radius: 6px;
+      border-left: 3px solid #0284c7;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2.5rem;
+      padding: 1rem 0;
+    }
+    .btn-new {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1.25rem;
+      background: #e2e8f0;
+      color: #1e293b;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .btn-new:hover {
+      background: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="brand">⚡ ComicCraft</a>
+    <div class="nav-links">
+      <a href="/">Create New</a>
+      <a href="/docs" target="_blank">API Docs</a>
+    </div>
+  </nav>
+
+  <div class="preview-container">
+    <div class="top-action-bar">
+      <div class="top-title">
+        <span>📖</span> Your Comic Preview
+      </div>
+      <div>
+        <button id="downloadBtn" onclick="handleDownload()" class="btn-download-pdf">
+          <span>📥</span> Download Your Comic as PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel by Panel loop -->
+    {% for panel in layout %}
+    <article class="comic-panel" id="panel-{{ panel.panel }}">
+      <header class="panel-top">
+        <h2 class="panel-heading">Panel {{ panel.panel }}: {{ panel.title }}</h2>
+      </header>
+
+      <div class="panel-img-container">
+        <img src="/{{ panel.image_path.lstrip('/') }}" alt="Panel {{ panel.panel }} illustration" loading="lazy">
+      </div>
+
+      <div class="panel-content">
+        {% if panel.scene_description %}
+        <p class="scene-description-text">
+          <em>{{ panel.scene_description }}</em>
+        </p>
+        {% endif %}
+
+        <div class="story-body">
+          {% if panel.caption %}
+          <p><strong style="color: #0369a1;">**CAPTION:**</strong> {{ panel.caption }}</p>
+          {% endif %}
+          
+          {% if panel.narration %}
+          <p><strong style="color: #1e293b;">**NARRATION:**</strong> {{ panel.narration }}</p>
+          {% endif %}
+          
+          {% if panel.dialogue %}
+          <p><strong style="color: #b45309;">**DIALOGUE:**</strong> {{ panel.dialogue }}</p>
+          {% endif %}
+
+          {% if not panel.caption and not panel.narration and panel.text %}
+          <p>{{ panel.text }}</p>
+          {% endif %}
+        </div>
+
+        {% if panel.image_prompt %}
+        <div class="prompt-box">
+          <small><strong>**IMAGE PROMPT:**</strong> {{ panel.image_prompt }}</small>
+        </div>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+
+    <div class="bottom-nav">
+      <a href="/" class="btn-new">⬅ Create Another Comic</a>
+      <button onclick="handleDownload()" class="btn-download-pdf">
+        <span>📥</span> Download Your Comic as PDF
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function handleDownload() {
+      const pdfUrl = "{{ pdf_path }}";
+      
+      // Trigger file download
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = pdfUrl.split('/').pop();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Redirect user to export success page after a short delay
+      setTimeout(() => {
+        window.location.href = `/export-success?pdf_path=${encodeURIComponent(pdfUrl)}`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
